@@ -1,0 +1,48 @@
+/*
+  IoT-Based Automatic Clothing Protection System
+  Author: Sai Disha J
+  Version: 1.0.0
+  Description: This program uses a rain sensor to detect rain and autonomously retrieves clothes to protect them from adverse weather conditions.
+*/
+
+// Include necessary libraries
+#include <Wire.h>               // For I2C communication
+#include <Servo.h>              // For controlling the servo motor
+
+// Pin Definitions
+#define RAIN_SENSOR_PIN A0     // Rain sensor pin
+#define SERVO_PIN 9            // Servo motor pin
+
+// Create servo object
+Servo servo;
+
+void setup() {
+  Serial.begin(115200);         // Start serial communication
+  pinMode(RAIN_SENSOR_PIN, INPUT); // Set rain sensor pin as input
+  servo.attach(SERVO_PIN);      // Attach servo to pin
+  servo.write(0);                // Initialize servo to closed position
+}
+
+void loop() {
+  int rainValue = analogRead(RAIN_SENSOR_PIN); // Read rain sensor value
+
+  // Check if rain is detected
+  if (rainValue < 500) { // Adjust threshold based on sensor calibration
+    Serial.println("Rain detected! Retrieving clothes...");
+    retrieveClothes(); // Call function to retrieve clothes
+  } else {
+    Serial.println("No rain detected.");
+  }
+
+  delay(1000); // Wait for 1 second before checking again
+}
+
+/**
+ * @brief Retrieves clothes by moving the servo to the open position.
+ */
+void retrieveClothes() {
+  servo.write(90); // Open position to retrieve clothes
+  delay(5000);      // Keep open for 5 seconds
+  servo.write(0);   // Close position to secure clothes
+  Serial.println("Clothes retrieved successfully.");
+}
